@@ -2,6 +2,14 @@
 import time
 import random
 
+going = True
+
+
+# добытые ресурсы
+all_food = 0
+all_energy = 0
+all_health = 0
+
 
 
 health = 100
@@ -12,33 +20,31 @@ energy = 50
 exprazb = 0
 
 notes = []
-acheves = []
-
-#lutiy, mega, goodNight, poel = False
-
-# if exp >= 100:
-#     lutiy = True
-# elif exp > 500:
-#     lutiy == False
-#     mega == True
 
 
 
 
+
+
+#охота
 def hunting():
-    global exp, food_suply, energy, health
+    global exp, food_suply, energy, health, all_health, all_energy
 
-    
+
     health -= 10
     exp += 50
     food_suply += 25
     energy -= 20
+
+    all_health += 10
+    all_energy += 20
     print("хорошо поохотились!")
 
 
 
+#прогулка
 def stroll():
-    global exp, energy, food_suply, health
+    global exp, energy, food_suply, health, all_energy
 
     r = random.randint(1, 5)
 
@@ -47,38 +53,44 @@ def stroll():
         exp += 20
     else:
         print("хорошо погуляли!")
+    energy -= 30
+
+    all_energy += 30
 
 
 
-
+#сон
 def slepping():
-    global exp, food_suply, energy, health
+    global exp, food_suply, energy, health, all_food
 
-    #time.sleep(5)
 
     health += 40
     exp += 10
     food_suply -= 10
     energy += 60
+
+
     print("хорошо поспали!")
-    #goodNight == True
+    all_food += 10
 
 
 
+# ням-ням
 def eating():
-    global exp, food_suply, energy, health
+    global exp, food_suply, energy, health, all_food
 
-    #time.sleep(5)
-
+    energy += 50
     health += 40
     exp += 10
     food_suply -= 25
-    energy += 100
-    print("хорошо поспали!")
-    #poel == True
+        
+    print("хорошо поели!")
+
+    all_food += 25
 
 
 
+# ведение дневника
 def writing():
     print("----------------")
     print()
@@ -96,65 +108,79 @@ def writing():
 
 
 
-# def aceve():
-#     print()
-#     print("---------------------------")
-#     if lutiy == True:
-#         print("ЛЮТЫЙ. получить 100 очков опыта.")
-#     elif mega == True:
-#         print("МОЩНЫЙ. получить 500 очков опыта.")
-#     elif goodNight == True:
-#         print("СПОКОЙНОЙ НОЧИ. поспать.")
-#     elif poel == True:
-#         print("ПОЕЛ. перекусить.")
-
-
-
+# Поход 
 def trevel():
-    global exp, food_suply, energy, exprazb, health
-    
-    #y = random.randint(1, 10)
-    y = 1
-    exprazb = random.randint(110, 900)
+    global exp, food_suply, energy, exprazb, health, all_food, all_health, all_energy
+
+    y = random.randint(1, 10)
+
+    exprazb = random.randint(10, 300)
 
     if y == 1 and exp > exprazb:
         print("вы встретили разбойников, но победили их и утопили ящеров в воде байкальской")
         health -= 45
         energy -= 50
+        food_suply += 30
+        exp += 50
+
+        all_health += 45
+        all_energy += 50
+
     elif y == 1 and exp <= exprazb:
+        print("вы проиграли, но в следующий раз победа будет вашей!")
         health -= 100
         energy -= 70
         food_suply -= 30
-    # elif y == 2:
-    #     print("вы нашли ягоды, но пока вас небыло разбойники ограбили ваш дом")
-    #     food_suply = 15
-    #     exp -= 40
-    #     energy -= 50
-    # elif y == 3:
-    #     print("пока вас небыло ваш дом ограбили разбойники")
-    #     food_suply = 0
-    #     exp -= 50
-    #     energy -= 30
-    # elif y > 5:
-    #     print("вы нашли вкусные ягоды!")
-    #     energy -= 30
-    #     food_suply += 30
-    # else:
-    #     print("вы ничего не нашли")
-    #     energy -= 30
+
+        all_energy += 70
+        all_health += 100
+        all_food += 30
+
+    elif y == 2:
+        print("вы нашли ягоды, но пока вас небыло разбойники ограбили ваш дом")
+        food_suply = 15
+        energy -= 50
+
+        all_energy += 50
+        all_food += food_suply - 15
+
+    elif y == 3:
+        print("пока вас небыло ваш дом ограбили разбойники")
+        food_suply = 0
+        energy -= 30
+
+        all_food += food_suply
+        all_energy += 30
+
+    elif y > 5:
+        print("вы нашли вкусные ягоды!")
+        energy -= 30
+        food_suply += 30
+
+        all_energy += 30
+
+    else:
+        print("вы ничего не нашли")
+        energy -= 30
+
+        all_energy += 30
+
+    
 
 
+# Действия Игры
 
-while True:
+while going == True:
+
+
 
     print("----- список действий -----")
     print("1. охотиться")
     print("2. спать" )
     print("3. есть" )
     print("4. открыть дневник")
-    print("5. открыть список достижений")
-    print("6. погулять")
-    print("7. пойти  в поход")
+    print("5. погулять")
+    print("6. пойти  в поход")
 
 
 
@@ -176,16 +202,31 @@ while True:
             eating()
     elif action == 4:
         writing()
-    # elif action == 5:
-    #     aceve()
+    elif action == 5:
+            if energy < 30:
+                print("слишком мало еды")
+            else:
+                stroll()
     elif action == 6:
-        stroll()
-    elif action == 7:
         if energy <= 70 or exp < 100 or health < 50:
             print("вы не можете пойти в поход")
         else:
             trevel()
 
+
+    if energy < 20 and food_suply < 25:
+        going == False
+            
+        
+
+    if health <= 0:
+        going = False
+
+    
+    if energy > 200:
+        energy = 200
+    if health > 350:
+        health = 350
 
     print("---------------")
     print("здоровье: " + str(health))
@@ -195,3 +236,10 @@ while True:
     print("---------------")
 
     time.sleep(2)
+
+
+print("ну типо конец игры")
+print("ваш опыт:", exp)
+print("еды потрачено:", all_food)
+print("потрачено енергии:", all_energy)
+print("потрачено жизней:", all_health)
